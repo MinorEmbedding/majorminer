@@ -27,6 +27,7 @@
 
 namespace majorminer
 {
+  typedef int_fast32_t fint32_t;
   typedef uint_fast32_t fuint32_t;
   typedef std::pair<fuint32_t, fuint32_t> fuint32_pair_t;
   typedef fuint32_t vertex_t;

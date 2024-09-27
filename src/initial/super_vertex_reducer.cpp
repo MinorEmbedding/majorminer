@@ -131,14 +131,21 @@ void SuperVertexReducer::optimize()
   m_done = true;
 }
 
-bool SuperVertexReducer::isBadNode(fuint32_t target) const
+bool SuperVertexReducer::isBadNode(vertex_t target) const
 {
   bool initial = m_initialSuperVertex.contains(target);
   size_t count = m_embedding.getReverseMapping().count(target);
   return count >= (initial ? 2 : 1);
 }
 
-void SuperVertexReducer::addNode(fuint32_t target)
+fint32_t SuperVertexReducer::getVertexFitness(vertex_t target) const
+{
+  bool initial = m_initialSuperVertex.contains(target);
+  size_t count = m_embedding.getReverseMapping().count(target);
+  return count > (initial ? 1 : 0) ? NONLINEAR((initial ? (count-1) : (count))) : 0;
+}
+
+void SuperVertexReducer::addNode(vertex_t target)
 {
   if (m_superVertex.contains(target) || isBadNode(target) || !isConnected(target)) return;
 
@@ -150,7 +157,7 @@ void SuperVertexReducer::addNode(fuint32_t target)
   }
 }
 
-void SuperVertexReducer::removeNode(fuint32_t target)
+void SuperVertexReducer::removeNode(vertex_t target)
 {
   if (!m_superVertex.contains(target)) return;
   // 1. Check whether for each adjacent source vertex, there is another adjacent target node
@@ -174,10 +181,10 @@ void SuperVertexReducer::removeNode(fuint32_t target)
   }
 }
 
-bool SuperVertexReducer::isConnected(fuint32_t target) const
+bool SuperVertexReducer::isConnected(vertex_t target) const
 {
   bool connected = false;
-  m_embedding.iterateTargetGraphAdjacentBreak(target, [&](fuint32_t adj){
+  m_embedding.iterateTargetGraphAdjacentBreak(target, [&](vertex_t adj){
     connected |= m_superVertex.contains(adj);
     return connected;
   });
@@ -187,7 +194,7 @@ bool SuperVertexReducer::isConnected(fuint32_t target) const
 fuint32_t SuperVertexReducer::checkScore(const nodeset_t& placement) const
 {
   fuint32_t numberBad = 0;
-  for (auto node : placement) if (isBadNode(node)) numberBad++;
+  for (vertex_t node : placement) if(isBadNode(node)) numberBad++;
   return numberBad;
 }
 

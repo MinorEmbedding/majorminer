@@ -26,6 +26,7 @@ namespace majorminer
       void clear();
       void setup();
       bool isBadNode(fuint32_t target) const;
+      fint32_t getVertexFitness(fuint32_t target) const;
       void addNode(fuint32_t target);
       void removeNode(fuint32_t target);
       fuint32_t checkScore(const nodeset_t& placement) const;

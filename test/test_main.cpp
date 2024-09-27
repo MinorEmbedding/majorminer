@@ -57,6 +57,19 @@ TEST(EmbeddingTest, Basic_Cycle_4)
   ASSERT_TRUE(suite.isValid());
 }
 
+
+TEST(EmbeddingTest, Nikolaus)
+{
+  graph_t nikolaus = generate_completegraph(4);
+  nikolaus.insert(edge_t{2,4});
+  nikolaus.insert(edge_t{3,4});
+  graph_t chimera = generate_chimera(2,2);
+  auto visualizer = std::make_unique<ChimeraVisualizer>(nikolaus, chimera, "imgs/Nikolaus/Nikolaus", 2, 2);
+  EmbeddingSuite suite{nikolaus, chimera, visualizer.get()};
+  auto embedding = suite.find_embedding();
+  ASSERT_TRUE(suite.isValid());
+}
+
 TEST(EmbeddingTest, Cycle_5_Extra_Edges)
 {
   graph_t cycle = generate_cyclegraph(5);

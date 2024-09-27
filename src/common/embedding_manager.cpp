@@ -19,7 +19,7 @@ void EmbeddingManager::mapNode(fuint32_t node, fuint32_t targetNode)
 {
   if (!m_changesToPropagate.empty()) synchronize();
   m_lastNode = node;
-  DEBUG(std::cout << node << " -> " << targetNode << std::endl;)
+  // DEBUG(std::cout << node << " -> " << targetNode << std::endl;)
 
   m_nodesOccupied.insert(targetNode);
   m_mapping.insert(std::make_pair(node, targetNode));
@@ -32,17 +32,17 @@ void EmbeddingManager::mapNode(fuint32_t node, const nodeset_t& targetNodes)
 {
   if (!m_changesToPropagate.empty()) synchronize();
   m_lastNode = node;
-  DEBUG(OUT_S << node << " -> {";)
+  // DEBUG(OUT_S << node << " -> {";)
   for(auto targetNode : targetNodes)
   {
-    DEBUG(OUT_S << " " << targetNode;)
+    //DEBUG(OUT_S << " " << targetNode;)
     m_nodesOccupied.insert(targetNode);
     m_mapping.insert(std::make_pair(node, targetNode));
     m_reverseMapping.insert(std::make_pair(targetNode, node));
     m_targetNodesRemaining.unsafe_extract(targetNode);
 
   }
-  DEBUG(OUT_S << " }" << std::endl;)
+  // DEBUG(OUT_S << " }" << std::endl;)
   m_state.mapNode(node, targetNodes);
 }
 #undef ADJUST
@@ -123,6 +123,7 @@ void EmbeddingManager::synchronize()
   auto& sourceFreeNeighbors = m_state.getSourceFreeNeighbors();
   auto& nodesOccupied = m_state.getNodesOccupied();
   auto& targetNodesRemaining = m_state.getRemainingTargetNodes();
+  auto& revCount = m_state.getRevMappingCount();
   while(!m_changesToPropagate.empty() && m_nbCommitsRemaining > 0)
   {
     bool success = m_changesToPropagate.try_pop(change);
@@ -131,6 +132,7 @@ void EmbeddingManager::synchronize()
     {
       case ChangeType::DEL_MAPPING:
       {
+        revCount[change.m_b]--;
         eraseSinglePair(mapping, change.m_a, change.m_b);
         eraseSinglePair(revMapping, change.m_b, change.m_a);
         m_changeHistory[change.m_a].m_timestampNodeChanged = m_time.load();
@@ -138,6 +140,7 @@ void EmbeddingManager::synchronize()
       }
       case ChangeType::INS_MAPPING:
       {
+        revCount[change.m_b]++;
         mapping.insert(std::make_pair(change.m_a, change.m_b));
         revMapping.insert(std::make_pair(change.m_b, change.m_a));
         m_changeHistory[change.m_a].m_timestampNodeChanged = m_time.load();

@@ -4,8 +4,13 @@
 #define EIGEN_MPL2_ONLY
 #define TBB_PREVIEW_CONCURRENT_LRU_CACHE 1
 #define __DEBUG__ 1
+#define __NONLINEAR_COST__ 1
 
-
+#if __NONLINEAR_COST__ == 1
+#define NONLINEAR(...) (pow(__VA_ARGS__, 2))
+#else
+#define NONLINEAR(...) (__VA_ARGS__)
+#endif
 
 
 #if __DEBUG__ == 1

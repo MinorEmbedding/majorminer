@@ -58,3 +58,11 @@ void majorminer::printEmbeddingOverlapStats(const embedding_mapping_t& mapping)
   for (const auto& stat : stats) std::cout << "Source vertex " << stat.second << " is mapped onto " << stat.first << " vertices." << std::endl;
 }
 
+void majorminer::printGraph(const graph_t& graph)
+{
+  for (const auto& p : graph)
+  {
+    std::cout << "(" << p.first << ", " << p.second << ")" << std::endl;
+  }
+}
+

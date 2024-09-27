@@ -17,6 +17,8 @@ namespace majorminer
   embedding_mapping_t getReverseMapping(const embedding_mapping_t& mapping);
 
   void printEmbeddingOverlapStats(const embedding_mapping_t& mapping);
+
+  void printGraph(const graph_t& graph);
 }
 
 #endif

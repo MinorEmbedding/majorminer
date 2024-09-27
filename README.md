@@ -32,6 +32,10 @@ cmake .. -DMAJORMINER_BUILD_TESTS=[ON|OFF] # depending on whether you want to ru
 make
 ```
 
+## use the C++ libary
+In the [examples](examples/) folder, there is an example project that solves embedding problem and creates debug images.
+There is a readme containing the output in the same folder as well.
+
 ## Libraries used in the C++-Project
 #### [oneTBB](https://github.com/oneapi-src/oneTBB) (License: [Apache 2.0](https://choosealicense.com/licenses/apache-2.0/))
 #### [GoogleTest](https://github.com/google/googletest) (License: [BSD 3-Clause "New" or "Revised"](https://choosealicense.com/licenses/bsd-3-clause/))

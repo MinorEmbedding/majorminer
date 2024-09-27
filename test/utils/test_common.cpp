@@ -27,14 +27,6 @@ void majorminer::containsEdges(const graph_t& graph, std::initializer_list<edge_
   });
 }
 
-void majorminer::printGraph(const graph_t& graph)
-{
-  for (const auto& p : graph)
-  {
-    std::cout << "(" << p.first << ", " << p.second << ")" << std::endl;
-  }
-}
-
 
 void majorminer::addEdges(graph_t& graph, std::initializer_list<edge_t> edges)
 {

@@ -220,7 +220,16 @@ NetworkSimplexWrapper::LemonNode NetworkSimplexWrapper::createNode(vertex_t node
 
 NetworkSimplexWrapper::cost_t NetworkSimplexWrapper::determineCost(vertex_t node)
 {
-  return m_state.isNodeOccupied(node) ? OCCUPIED : FREE;
+  // printAdjacencyList(m_state.getReverseMapping());
+  auto mapped = m_state.getReverseMappedCnt(node);
+  // auto nb = m_state.getReverseMapping().count(node);
+  // std::cout << "Node " << node << ": " << mapped << " ?= " << nb << std::endl;
+  // if (mapped != (fint32_t)nb)
+  // {
+  //   std::cout << mapped << " != " << nb << std::endl;
+  //   throw std::runtime_error("error!");
+  // }
+  return mapped != 0 ? /*mapped **/ OCCUPIED : FREE;
 }
 
 void NetworkSimplexWrapper::setupCostsAndCaps()

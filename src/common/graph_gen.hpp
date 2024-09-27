@@ -26,7 +26,7 @@ namespace majorminer
   graph_t generate_petersen();
 
   /// Import an edge list from a file.
-  graph_t import_graph(std::string filename);
+  graph_t import_graph(const std::string& filename);
 
   /// Import an edge list from a character array.
   graph_t import_graph(const char* edgeList, size_t length);

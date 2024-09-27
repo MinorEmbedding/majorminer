@@ -29,6 +29,12 @@ void EmbeddingState::initialize()
   m_numberSourceVertices = m_nodesRemaining.size();
 }
 
+fint32_t EmbeddingState::getReverseMappedCnt(vertex_t target) const
+{
+  auto findIt = m_reverseCount.find(target);
+  return findIt != m_reverseCount.end() ? findIt->second : 0;
+}
+
 fuint32_t EmbeddingState::getTrivialNode()
 { // TODO: assert
   auto node = *m_nodesRemaining.begin();
@@ -36,7 +42,7 @@ fuint32_t EmbeddingState::getTrivialNode()
   return node.first;
 }
 
-bool EmbeddingState::removeRemainingNode(fuint32_t node)
+bool EmbeddingState::removeRemainingNode(vertex_t node)
 {
   if (!m_nodesRemaining.contains(node)) return false;
   m_nodesRemaining.unsafe_erase(node);
@@ -48,27 +54,29 @@ void EmbeddingState::unmapNode(vertex_t sourceVertex)
   auto range = m_mapping.equal_range(sourceVertex);
   for (auto mappedIt = range.first; mappedIt != range.second; ++mappedIt)
   {
+    m_reverseCount[mappedIt->second]--;
     eraseSinglePair(m_reverseMapping, mappedIt->second, mappedIt->first);
   }
   m_mapping.unsafe_erase(sourceVertex);
 }
 
-void EmbeddingState::updateNeededNeighbors(fuint32_t node)
+void EmbeddingState::updateNeededNeighbors(vertex_t node)
 {
   fuint32_t nbNodes = 0;
-  iterateSourceGraphAdjacent(node, [&, this](fuint32_t adjacentSource){
+  iterateSourceGraphAdjacent(node, [&, this](vertex_t adjacentSource){
     if (isNodeMapped(adjacentSource))
     {
-      nbNodes++; m_sourceNeededNeighbors[adjacentSource]--;
+      nbNodes++;
+      m_sourceNeededNeighbors[adjacentSource]--;
     }
   });
   m_sourceNeededNeighbors[node] -= nbNodes;
 }
 
 
-void EmbeddingState::updateConnections(fuint32_t node, PrioNodeQueue& nodesToProcess)
+void EmbeddingState::updateConnections(vertex_t node, PrioNodeQueue& nodesToProcess)
 {
-  iterateSourceGraphAdjacent(node, [&](fuint32_t adjacent){
+  iterateSourceGraphAdjacent(node, [&](vertex_t adjacent){
     auto findIt = m_nodesRemaining.find(adjacent);
     if (findIt != m_nodesRemaining.end())
     {
@@ -78,7 +86,7 @@ void EmbeddingState::updateConnections(fuint32_t node, PrioNodeQueue& nodesToPro
   });
 }
 
-int EmbeddingState::numberFreeNeighborsNeeded(fuint32_t sourceNode) const
+int EmbeddingState::numberFreeNeighborsNeeded(vertex_t sourceNode) const
 { // TODO: rework
   // std::cout << "Source node " << sourceNode << " needs " << m_sourceNeededNeighbors[sourceNode].load() << " neighbors and has " << m_sourceFreeNeighbors[sourceNode].load() << std::endl;
   auto it = m_sourceNeededNeighbors.find(sourceNode);
@@ -86,15 +94,16 @@ int EmbeddingState::numberFreeNeighborsNeeded(fuint32_t sourceNode) const
     - std::max(getSourceNbFreeNeighbors(sourceNode), 0);
 }
 
-int EmbeddingState::getSourceNbFreeNeighbors(fuint32_t sourceNode) const
+int EmbeddingState::getSourceNbFreeNeighbors(vertex_t sourceNode) const
 {
   auto it = m_sourceFreeNeighbors.find(sourceNode);
   return it == m_sourceFreeNeighbors.end() ? 0 : it->second.load();
 }
 
 
-void EmbeddingState::mapNode(fuint32_t source, fuint32_t targetNode)
+void EmbeddingState::mapNode(vertex_t source, vertex_t targetNode)
 {
+  m_reverseCount[targetNode]++;
   m_nodesOccupied.insert(targetNode);
   m_mapping.insert(std::make_pair(source, targetNode));
   m_reverseMapping.insert(std::make_pair(targetNode, source));
@@ -102,10 +111,11 @@ void EmbeddingState::mapNode(fuint32_t source, fuint32_t targetNode)
   removeRemainingNode(source);
 }
 
-void EmbeddingState::mapNode(fuint32_t source, const nodeset_t& targets)
+void EmbeddingState::mapNode(vertex_t source, const nodeset_t& targets)
 {
   for (auto targetNode : targets)
   {
+    m_reverseCount[targetNode]++;
     m_nodesOccupied.insert(targetNode);
     m_mapping.insert(std::make_pair(source, targetNode));
     m_reverseMapping.insert(std::make_pair(targetNode, source));

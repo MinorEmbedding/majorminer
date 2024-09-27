@@ -33,6 +33,8 @@ namespace majorminer
 
       ThreadManager& getThreadManager() { return m_threadManager; }
       void setLMRPSubgraphGenerator(LMRPSubgraph* gen) { m_lmrpGen = gen; }
+      fint32_t getReverseMappedCnt(vertex_t target) const;
+      UnorderedMap<vertex_t, fint32_t>& getRevMappingCount() { return m_reverseCount; }
 
     public: // getter
       const graph_t* getSourceGraph() const override { return m_sourceGraph; }
@@ -88,6 +90,8 @@ namespace majorminer
       LMRPSubgraph* m_lmrpGen;
 
       ThreadManager m_threadManager;
+
+      UnorderedMap<vertex_t, fint32_t> m_reverseCount;
   };
 
 }

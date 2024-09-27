@@ -30,26 +30,24 @@ void SuperVertexPlacer::operator()()
 
 void SuperVertexPlacer::replaceOverlapping()
 {
-  std::cout << "Replace overlapping " << std::endl;
   nodeset_t overlapping{};
-  fuint32_t maxIterations = 5;
   // const auto& sourceGraph = m_state.getSourceAdjGraph();
 
-  // nodeset_t temporary{};
+  nodeset_t temporary{};
 
-  for (fuint32_t idx = 0; idx < maxIterations; ++idx)
+  for (fuint32_t idx = 0; idx < 20; ++idx)
   {
+    // std::cout << "Idx: " << idx << " -> " 
     identifyOverlapping(overlapping);
     if (overlapping.empty()) break;
-    std::cout << "Replace overlapping; iteration " << (idx + 1) << std::endl;
     for (vertex_t vertex : overlapping)
     {
-      improveMapping(vertex);
-      // replaceSuperVertex(vertex, temporary);
+      if(idx % 2 == 0) improveMapping(vertex);
+      else replaceSuperVertex(vertex, temporary);
 
       // visualize(vertex, PlacedNodeType::COMPLEX, sourceGraph.count(vertex));
     }
-
+    temporary.clear();
   }
 }
 
@@ -80,7 +78,7 @@ void SuperVertexPlacer::improveMapping(vertex_t source)
     m_embeddingManager.unmapNode(source);
     const auto& superVertex = reducer.getPlacement();
     m_embeddingManager.mapNode(source, superVertex);
-    std::cout << "Improved through reducer. " << std::endl;
+    // std::cout << "Improved through reducer. " << std::endl;
     if (m_state.hasVisualizer())
     {
       visualize(source, PlacedNodeType::COMPLEX, sourceGraph.count(source));
@@ -200,7 +198,6 @@ void SuperVertexPlacer::embeddNodeNetworkSimplex(vertex_t node, const nodeset_t*
   m_embeddingManager.mapNode(node, superVertex);
   printNodeset(m_nsWrapper->getMapped());
   printNodeset(superVertex);*/
-
 }
 
 void SuperVertexPlacer::embeddSimpleNode(vertex_t node)
@@ -226,7 +223,7 @@ void SuperVertexPlacer::embeddSimpleNode(vertex_t node)
 
   // map "node" to "bestNodeFound"
   m_embeddingManager.mapNode(node, bestNodeFound);
-  m_state.updateNeededNeighbors(node);
+  // m_state.updateNeededNeighbors(node);
 }
 
 void SuperVertexPlacer::embeddTrivialNode(vertex_t node)

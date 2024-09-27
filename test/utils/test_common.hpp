@@ -15,8 +15,6 @@ namespace majorminer
 {
   void containsEdges(const graph_t& graph, std::initializer_list<edge_t> edges);
 
-  void printGraph(const graph_t& graph);
-
   void addEdges(graph_t& graph, std::initializer_list<edge_t> edges);
 
   void assertEquality1(fuint32_t n, qcoeff_t penalty);

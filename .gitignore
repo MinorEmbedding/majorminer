@@ -1,5 +1,5 @@
 # Own stuff
-build/
+**/build/
 Makefile
 external/lemon/
 external/lemon.tar.gz

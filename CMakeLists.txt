@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.7)
 
 project(majorminer)
 
-option(MAJORMINER_BUILD_TESTS "Build majorminer test executable" ON)
+option(MAJORMINER_BUILD_TESTS       "Build majorminer test executable"      ON)
+option(MAJORMINER_BUILD_EXAMPLES    "Build majorminer example executable"   ON)
 enable_language(C CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CXX_STANDARD_REQUIRED ON)
@@ -46,4 +47,8 @@ if ( ${MAJORMINER_BUILD_TESTS} )
     add_subdirectory(test)
     target_include_directories(majorminer_test PRIVATE src ${MM_INCLUDE_LIBS})
     target_link_libraries(majorminer_test majorminer gtest_main)
+endif()
+
+if ( ${MAJORMINER_BUILD_EXAMPLES} )
+    add_subdirectory(examples)
 endif()

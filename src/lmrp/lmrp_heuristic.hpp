@@ -47,6 +47,16 @@ namespace majorminer
       void mapToSingleAdjacent(vertex_t neighbor);
       void addAdjacentVertices(vertex_t source, nodeset_t& adjacent);
 
+    public:
+      // validation functions
+      bool componentsConnected() const;
+      bool destroyedConnected() const;
+      bool allEdgesEmbedded() const;
+      bool allDestroyedEmbedded() const;
+      void removeEdges(const nodeset_t& fromSet, graph_t& remaining) const;
+      void connectivityDFS(nodeset_t& connected, nodeset_t& mapped,
+        Stack<adjacency_list_range_iterator_t>& stack) const;
+
     private:
       const EmbeddingState& m_state;
       bool m_done;
@@ -66,7 +76,7 @@ namespace majorminer
       embedding_mapping_t m_reverse;
       graph_t m_superVertices;
 
-      PriorityQueue<DijkstraVertex> m_dijkstraQueue;
+      PriorityQueue<DijkstraVertex, std::greater<DijkstraVertex>> m_dijkstraQueue;
       UnorderedMap<vertex_t, DijkstraVertex> m_bestPaths;
       vertex_t m_currentSource;
   };

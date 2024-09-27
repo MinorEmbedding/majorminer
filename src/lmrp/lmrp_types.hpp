@@ -16,6 +16,13 @@ namespace majorminer
     { return c1.m_source < c2.m_source || (c1.m_source == c2.m_source
       && c1.m_nbMapped < c2.m_nbMapped); }
 
+    friend std::ostream& operator<<(std::ostream& os, const ConnectedList& component)
+    {
+      os << "Component{source=" << component.m_source << "; nbMapped="
+         << component.m_nbMapped << "; idx=" << component.m_idx << "}";
+      return os;
+    }
+
     vertex_t m_source;
     fuint32_t m_idx;
     fuint32_t m_nbMapped;
@@ -38,15 +45,24 @@ namespace majorminer
 
       bool lowerTo(fuint32_t parent, fuint32_t overlap, fuint32_t nonOverlap);
 
-      friend bool operator<(const DijkstraVertex& v1, const DijkstraVertex& v2)
+      friend bool operator>(const DijkstraVertex& v1, const DijkstraVertex& v2)
       {
-        return v1.m_overlapCnt < v2.m_overlapCnt ||
+        return v1.m_overlapCnt > v2.m_overlapCnt ||
           ( v1.m_overlapCnt == v2.m_overlapCnt
-            && v1.m_nonOverlapCnt < v2.m_nonOverlapCnt);
+            && v1.m_nonOverlapCnt > v2.m_nonOverlapCnt);
       }
 
       friend bool operator==(const DijkstraVertex& v1, const DijkstraVertex& v2)
       { return v1.m_target == v2.m_target; }
+
+      friend std::ostream& operator<<(std::ostream& os, const DijkstraVertex& v)
+      {
+        os << "DijkstraVertex{target=" << v.m_target << "; fitness=(" << v.m_overlapCnt << ","
+           << v.m_nonOverlapCnt << "); nbMapped=" << v.m_visited << "; parent="
+           << v.m_parent << " }";
+        return os;
+      }
+
 
       vertex_t m_target;
       vertex_t m_parent;

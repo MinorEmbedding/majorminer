@@ -3,6 +3,7 @@
 
 #include <majorminer_types.hpp>
 #include <common/debug_utils.hpp>
+#include <type_traits>
 
 
 namespace majorminer
@@ -10,15 +11,17 @@ namespace majorminer
 
   void convertToAdjacencyList(adjacency_list_t& adj, const graph_t& graph);
 
-  template<typename T, typename Comparator = std::less<T>>
-  std::pair<T,T> orderedPair(const T& e1, const T& e2)
+  template<typename K, typename V, typename Comparator = std::less<K>>
+  std::pair<K,V> orderedPair(const K& e1, const V& e2)
   {
+    static_assert(std::is_same_v<typename std::add_const<K>::type, typename std::add_const<V>::type>,
+      "Ordered pair parameters must at most differ by their const classifier!");
     if (Comparator()(e1, e2)) return std::make_pair(e1, e2);
-    else return std::make_pair(e1, e2);
+    else return std::make_pair(e2, e1);
   }
 
-  template<typename T, typename Comparator = std::less<T>>
-  std::pair<T,T> orderedPair(const std::pair<T, T>& p)
+  template<typename K, typename V, typename Comparator = std::less<K>>
+  std::pair<K,V> orderedPair(const std::pair<K, V>& p)
   {
     return orderedPair(p.first, p.second);
   }

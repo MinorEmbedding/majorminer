@@ -84,7 +84,7 @@ graph_t majorminer::generate_king(fuint32_t rows, fuint32_t cols)
 }
 
 
-graph_t majorminer::import_graph(std::string filename)
+graph_t majorminer::import_graph(const std::string& filename)
 {
   std::ifstream file(filename);
   if (!file.is_open()) throw std::runtime_error("File not found.");
